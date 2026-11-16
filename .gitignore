@@ -1,0 +1,6 @@
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+backend/alumnos.sqlite3
+backend/alumnos.sqlite3-shm
+backend/alumnos.sqlite3-wal

@@ -1,0 +1,144 @@
+<main class="page">
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Inicio">
+      <span class="brand-mark">A</span>
+      <span>Aula<span class="brand-light">Simple</span></span>
+    </a>
+    <span class="topbar-note">Panel de administración</span>
+  </header>
+
+  <section class="intro">
+    <p class="eyebrow">GESTIÓN ACADÉMICA</p>
+    <h1>Alumnos</h1>
+    <p class="subtitle">Administra la información de tus estudiantes en un solo lugar.</p>
+  </section>
+
+  @if (errorMessage) {
+    <div class="notice notice-error" role="alert">{{ errorMessage }}</div>
+  }
+  @if (successMessage) {
+    <div class="notice notice-success" role="status">{{ successMessage }}</div>
+  }
+
+  <section class="content-grid">
+    <form class="card form-card" (ngSubmit)="guardarAlumno()">
+      <div class="card-heading">
+        <div>
+          <p class="eyebrow">{{ editingId === null ? 'NUEVO REGISTRO' : 'EDITAR REGISTRO' }}</p>
+          <h2>{{ editingId === null ? 'Agregar alumno' : 'Editar alumno' }}</h2>
+        </div>
+        <span class="heading-icon" aria-hidden="true">{{ editingId === null ? '+' : '✎' }}</span>
+      </div>
+
+      <label for="nombre">Nombre completo</label>
+      <input
+        id="nombre"
+        name="nombre"
+        type="text"
+        placeholder="Ej. Camila Torres"
+        [(ngModel)]="form.nombre"
+        required
+      />
+
+      <label for="correo">Correo electrónico</label>
+      <input
+        id="correo"
+        name="correo"
+        type="email"
+        placeholder="camila@correo.com"
+        [(ngModel)]="form.correo"
+        required
+      />
+
+      <label for="curso">Curso</label>
+      <input
+        id="curso"
+        name="curso"
+        type="text"
+        placeholder="Ej. Matemáticas"
+        [(ngModel)]="form.curso"
+        required
+      />
+
+      <button class="button button-primary submit-button" type="submit" [disabled]="saving">
+        {{ saving ? 'Guardando…' : editingId === null ? 'Agregar alumno' : 'Guardar cambios' }}
+      </button>
+      @if (editingId !== null) {
+        <button class="button button-quiet cancel-button" type="button" (click)="cancelarEdicion()">
+          Cancelar edición
+        </button>
+      }
+    </form>
+
+    <section class="card roster-card" aria-labelledby="roster-title">
+      <div class="roster-heading">
+        <div>
+          <p class="eyebrow">DIRECTORIO</p>
+          <h2 id="roster-title">Lista de alumnos</h2>
+        </div>
+        <span class="count-pill">{{ alumnos.length }} {{ alumnos.length === 1 ? 'alumno' : 'alumnos' }}</span>
+      </div>
+
+      @if (loading) {
+        <div class="empty-state">
+          <span class="loader" aria-hidden="true"></span>
+          <p>Cargando alumnos…</p>
+        </div>
+      } @else if (alumnos.length === 0) {
+        <div class="empty-state">
+          <span class="empty-icon" aria-hidden="true">▤</span>
+          <p class="empty-title">Aún no hay alumnos</p>
+          <p>Agrega el primero usando el formulario.</p>
+        </div>
+      } @else {
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Alumno</th>
+                <th>Curso</th>
+                <th class="actions-heading">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (alumno of alumnos; track alumno.id) {
+                <tr>
+                  <td>
+                    <div class="student-cell">
+                      <span class="avatar">{{ iniciales(alumno.nombre) }}</span>
+                      <span class="student-info">
+                        <strong>{{ alumno.nombre }}</strong>
+                        <span>{{ alumno.correo }}</span>
+                      </span>
+                    </div>
+                  </td>
+                  <td><span class="course-tag">{{ alumno.curso }}</span></td>
+                  <td>
+                    <div class="row-actions">
+                      <button
+                        class="icon-button edit-button"
+                        type="button"
+                        [attr.aria-label]="'Editar a ' + alumno.nombre"
+                        title="Editar"
+                        (click)="editarAlumno(alumno)"
+                      >✎</button>
+                      <button
+                        class="icon-button delete-button"
+                        type="button"
+                        [attr.aria-label]="'Eliminar a ' + alumno.nombre"
+                        title="Eliminar"
+                        (click)="eliminarAlumno(alumno)"
+                      >×</button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  </section>
+
+  <footer>Hecho para mantener la información de tu clase organizada.</footer>
+</main>
